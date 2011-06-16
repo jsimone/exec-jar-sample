@@ -1,6 +1,10 @@
+import java.io.File;
 import java.net.URL;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
 
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.util.StringUtil;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 /**
@@ -23,6 +27,7 @@ public class JettyLauncher {
     public static void main(String[] args) throws Exception{
         Server server = new Server(8080);
         WebAppContext root = new WebAppContext();
+        JettyLauncher jettyLauncher = new JettyLauncher();
 
         //new URL("jar:file:/home/jsimone/.m2/repository/com/force/sample/springDebugTest/1.0-SNAPSHOT/springDebugTest-1.0-SNAPSHOT.war!/WEB-INF/web.xml");
         //The location of your web.xml
@@ -32,11 +37,17 @@ public class JettyLauncher {
         //root.setResourceBase("jar:file:/home/jsimone/.m2/repository/com/force/sample/springDebugTest/1.0-SNAPSHOT/springDebugTest-1.0-SNAPSHOT.war!/");
         
         //Want to do this with the setDescriptor and setResourceBase methods, but was having some issues setting that up. Jesper's jar approach would work around this issue.
-        root.setWar(new JettyLauncher().getWarLocation().getPath());
+        root.setWar(jettyLauncher.getWarLocation().getPath());
         //Hack to get the taglibs onto the webapp classpath for now. Could also do this in the pom, but would just be a different version of the same hack
-        root.setExtraClasspath(System.getProperty("user.home") + "/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar" + ",;" + System.getProperty("user.home") + "/.m2/repository/org/springframework/spring-webmvc/3.0.5.RELEASE/spring-webmvc-3.0.5.RELEASE.jar");
+        //root.setExtraClasspath(System.getProperty("user.home") + "/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar" + ",;" + System.getProperty("user.home") + "/.m2/repository/org/springframework/spring-webmvc/3.0.5.RELEASE/spring-webmvc-3.0.5.RELEASE.jar");
         //Your context root
         root.setContextPath("/");
+        
+        JarFile jarFile = new JarFile(new File(jettyLauncher.getWarLocation().getPath()));
+        Attributes attributes = jarFile.getManifest().getMainAttributes();
+        String classpath = attributes.getValue("Class-Path");
+        classpath = StringUtil.replace(classpath, " ", ";");
+        root.setExtraClasspath(classpath);
         
         //root.setAttribute(WebInfConfiguration.CONTAINER_JAR_PATTERN, ".*/[^/]*\\.jar");
         

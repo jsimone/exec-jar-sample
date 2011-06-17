@@ -4,8 +4,8 @@
 	<groupId>com.force.sample</groupId>
 	<version>1.0-SNAPSHOT</version>
 	<name>exec-war-sample</name>
-	<artifactId>exec-war-sample</artifactId>
-	<packaging>war</packaging>
+	<artifactId>exec-jar-sample</artifactId>
+	<packaging>jar</packaging>
 
 	<properties>
 		<java-version>1.6</java-version>
@@ -246,8 +246,24 @@
 	</pluginRepositories>
 
 	<build>
-
 		<plugins>
+		<plugin>
+	        <groupId>org.apache.maven.plugins</groupId>
+	        <artifactId>maven-dependency-plugin</artifactId>
+	        <version>2.2</version>
+	        <executions>
+	          <execution>
+	            <id>build-classpath</id>
+	            <phase>generate-sources</phase>
+	            <goals>
+	              <goal>build-classpath</goal>
+	            </goals>
+	            <configuration>
+	              <outputFile>${project.build.directory}/classpath.cp</outputFile>
+	            </configuration>
+	          </execution>
+	        </executions>
+      	</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -257,6 +273,7 @@
 					<target>${java-version}</target>
 				</configuration>
 			</plugin>
+			<!-- 
           <plugin>
             <artifactId>maven-resources-plugin</artifactId>
             <version>2.5</version>
@@ -277,11 +294,11 @@
               </execution>
             </executions>
            </plugin>	
+			 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
+                <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
-                	<packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
                     <archive>
                         <manifest>
                             <mainClass>JettyLauncher</mainClass>

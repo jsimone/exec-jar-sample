@@ -247,23 +247,23 @@
 
 	<build>
 		<plugins>
-		<plugin>
-	        <groupId>org.apache.maven.plugins</groupId>
-	        <artifactId>maven-dependency-plugin</artifactId>
-	        <version>2.2</version>
-	        <executions>
-	          <execution>
-	            <id>build-classpath</id>
-	            <phase>generate-sources</phase>
-	            <goals>
-	              <goal>build-classpath</goal>
-	            </goals>
-	            <configuration>
-	              <outputFile>${project.build.directory}/classpath.cp</outputFile>
-	            </configuration>
-	          </execution>
-	        </executions>
-      	</plugin>
+			<plugin>
+		        <groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-dependency-plugin</artifactId>
+		        <version>2.2</version>
+		        <executions>
+		          <execution>
+		            <id>build-classpath</id>
+		            <phase>generate-sources</phase>
+		            <goals>
+		              <goal>build-classpath</goal>
+		            </goals>
+		            <configuration>
+		              <outputFile>${project.build.directory}/classpath.cp</outputFile>
+		            </configuration>
+		          </execution>
+		        </executions>
+	      	</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -295,7 +295,7 @@
             </executions>
            </plugin>	
 			 -->
-            <plugin>
+           <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>

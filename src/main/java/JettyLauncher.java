@@ -1,6 +1,5 @@
 import java.io.File;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 
@@ -17,53 +16,23 @@ import org.eclipse.jetty.webapp.WebAppContext;
  * @author John Simone
  */
 public class JettyLauncher {
-
+    
     private URL getArtifactLocation() {
         return this.getClass().getProtectionDomain().getCodeSource().getLocation();
     }
     
-    private static boolean isJarOrWar(URL artifactClasspathUrl) {
-        String extension = 
-            artifactClasspathUrl.getPath().substring(artifactClasspathUrl.getPath().length() - 3);
-        return "jar".equalsIgnoreCase(extension) || "war".equalsIgnoreCase(extension);
-    }
-    
-    private boolean isCurrentJar(URL artifactClasspathUrl) {
-        return artifactClasspathUrl.getPath().equals(getArtifactLocation().getPath());
-    }
-    
-    /**
-     * @param args
-     */
-    public static void main(String[] args) throws Exception{
-        if(args.length<1) {
-            System.out.println("Missing required argument: path_to_webapp");
-            System.exit(1);
-        }
-        
-        Server server = new Server(8080);
+    private static void startJetty(String webappDirLocation, String classpath, int port) throws Exception {
+        Server server = new Server(port);
         WebAppContext root = new WebAppContext();
-        JettyLauncher jettyLauncher = new JettyLauncher();
 
         root.setContextPath("/");
-        root.setDescriptor(args[0]+"/WEB-INF/web.xml");
-        root.setResourceBase(args[0]);
+        root.setDescriptor(webappDirLocation+"/WEB-INF/web.xml");
+        root.setResourceBase(webappDirLocation);
+
+        //Jetty expects the classpath to be semi-colon 
+        classpath = StringUtil.replace(classpath, " ", ";");
         
-        URLClassLoader defaultClassloader = (URLClassLoader)JettyLauncher.class.getClassLoader();
-        URL[] classloaderUrls = defaultClassloader.getURLs();
-        
-        //if the classpath contains a single jar or war which is the current
-        //archive then this is a -jar execution and we need to enhance the classpath
-        //with the values from the manifest of the archive
-        if(classloaderUrls.length == 1 
-                && isJarOrWar(classloaderUrls[0]) 
-                && jettyLauncher.isCurrentJar(classloaderUrls[0])) {
-            JarFile jarFile = new JarFile(new File(jettyLauncher.getArtifactLocation().getPath()));
-            Attributes attributes = jarFile.getManifest().getMainAttributes();
-            String classpath = attributes.getValue("Class-Path");
-            classpath = StringUtil.replace(classpath, " ", ";");
-            root.setExtraClasspath(classpath);            
-        }
+        root.setExtraClasspath(classpath);            
         
         //Parent loader priority is a class loader setting that Jetty accepts.
         //By default Jetty will behave like most web containers in that it will
@@ -75,7 +44,38 @@ public class JettyLauncher {
         server.setHandler(root);
  
         server.start();
-        server.join();
+        server.join();        
+    }
+    
+    /**
+     * @param args
+     */
+    public static void main(String[] args) throws Exception{
+        String webappDirLocation = null;
+        if(args.length<1) {
+            System.out.println("Missing argument: path_to_webapp_directory. Checking default location: 'src/main/webapp/'");
+            webappDirLocation = "src/main/webapp/";
+        } else {
+            webappDirLocation = args[0];
+        }
+        
+        File webAppDir = new File(webappDirLocation);
+        if(!webAppDir.exists() || !webAppDir.isDirectory()) {
+            System.out.println("Error locating the webapp directory specified: " + webappDirLocation);
+            System.exit(1);
+        }
+
+        //Retrieve the classpath value from the manifest of the archive
+        //this will be used to add to the classpath of the webapp. This replaces
+        //the usual process of storing jars in the WEB-INF/lib and allows them to
+        //be accessed externally
+        JettyLauncher jettyLauncher = new JettyLauncher();
+        JarFile jarFile = new JarFile(new File(jettyLauncher.getArtifactLocation().getPath()));
+        Attributes attributes = jarFile.getManifest().getMainAttributes();
+        String classpath = attributes.getValue("Class-Path");
+
+        //Start the jetty server
+        startJetty(webappDirLocation, classpath, 8080);
     }
 
 }

@@ -12,7 +12,6 @@
 		<org.springframework-version>3.0.5.RELEASE</org.springframework-version>
 		<org.aspectj-version>1.6.9</org.aspectj-version>
 		<org.slf4j-version>1.6.1</org.slf4j-version>
-		<force.sdk.version>22.0.2-SNAPSHOT</force.sdk.version>
 		<jettyVersion>7.3.1.v20110307</jettyVersion>
 		<mavenCache>${user.home}/.m2/repository</mavenCache>
 	</properties>
@@ -77,25 +76,13 @@
 			<version>1</version>
 		</dependency>
 
-		<!-- Servlet -->
-		<!-- 
-		 
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet.jsp</groupId>
-			<artifactId>jsp-api</artifactId>
-			<version>2.1</version>
-		</dependency>
--->
+		<!-- Taglibs -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>jstl</artifactId>
 			<version>1.2</version>
 		</dependency>
+		
 		<!-- Spring Web MVC Features -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -141,47 +128,12 @@
 			<artifactId>spring-security-config</artifactId>
 			<version>${org.springframework-version}</version>
 		</dependency>
-		<dependency>
-			<groupId>com.force.sdk</groupId>
-			<artifactId>force-springsecurity</artifactId>
-			<version>${force.sdk.version}</version>
-		</dependency>
 
 		<!-- AspectJ -->
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
 			<version>${org.aspectj-version}</version>
-		</dependency>
-
-		<!-- VMForce -->
-
-		<dependency>
-			<groupId>com.force.sdk</groupId>
-			<artifactId>force-jpa</artifactId>
-			<version>${force.sdk.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.datanucleus</groupId>
-			<artifactId>datanucleus-core</artifactId>
-			<version>2.2.3</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.datanucleus</groupId>
-			<artifactId>datanucleus-jpa</artifactId>
-			<version>2.1.7</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-tx</artifactId>
-			<version>${org.springframework-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-orm</artifactId>
-			<version>${org.springframework-version}</version>
 		</dependency>
 
 		<!-- CGLIB -->
@@ -220,50 +172,8 @@
 	    </dependency>
 	</dependencies>
 
-	<repositories>
-		<!-- VMforce snapshot repository -->
-		<repository>
-			<id>com.force.maven.snapshot</id>
-			<name>Force.com Maven Repo</name>
-			<url>http://repo.t.salesforce.com/archiva/repository/snapshots</url>
-		</repository>
-		<!-- VMforce release repository -->
-		<repository>
-			<id>com.force.maven.release</id>
-			<name>Force.com Maven Repo</name>
-			<url>http://repo.t.salesforce.com/archiva/repository/releases</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-
-	<pluginRepositories>
-		<pluginRepository>
-			<id>DataNucleus_2</id>
-			<url>http://www.datanucleus.org/downloads/maven2/</url>
-		</pluginRepository>
-	</pluginRepositories>
-
 	<build>
 		<plugins>
-			<plugin>
-		        <groupId>org.apache.maven.plugins</groupId>
-		        <artifactId>maven-dependency-plugin</artifactId>
-		        <version>2.2</version>
-		        <executions>
-		          <execution>
-		            <id>build-classpath</id>
-		            <phase>generate-sources</phase>
-		            <goals>
-		              <goal>build-classpath</goal>
-		            </goals>
-		            <configuration>
-		              <outputFile>${project.build.directory}/classpath.cp</outputFile>
-		            </configuration>
-		          </execution>
-		        </executions>
-	      	</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -273,28 +183,6 @@
 					<target>${java-version}</target>
 				</configuration>
 			</plugin>
-			<!-- 
-          <plugin>
-            <artifactId>maven-resources-plugin</artifactId>
-            <version>2.5</version>
-            <executions>
-              <execution>
-                <phase>package</phase>
-                <goals>
-                  <goal>copy-resources</goal>
-                </goals>
-                <configuration>
-                  <outputDirectory>${project.build.directory}/${project.artifactId}-${project.version}</outputDirectory>
-                  <resources>          
-                    <resource>
-                      <directory>${project.build.directory}/${project.artifactId}-${project.version}/WEB-INF/classes</directory>
-                    </resource>
-                  </resources>              
-                </configuration>            
-              </execution>
-            </executions>
-           </plugin>	
-			 -->
            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -346,53 +234,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.datanucleus</groupId>
-				<artifactId>maven-datanucleus-plugin</artifactId>
-				<version>2.1.0-release</version>
-				<dependencies>
-					<dependency>
-						<groupId>org.datanucleus</groupId>
-						<artifactId>datanucleus-core</artifactId>
-						<version>2.2.3</version>
-						<scope>runtime</scope>
-					</dependency>
-					<dependency>
-						<groupId>org.datanucleus</groupId>
-						<artifactId>datanucleus-enhancer</artifactId>
-						<version>2.1.0-release</version>
-						<scope>runtime</scope>
-					</dependency>
-					<dependency>
-						<groupId>org.datanucleus</groupId>
-						<artifactId>datanucleus-rdbms</artifactId>
-						<version>2.1.0-release</version>
-						<scope>runtime</scope>
-						<optional>true</optional>
-					</dependency>
-
-					<dependency>
-						<groupId>org.datanucleus</groupId>
-						<artifactId>datanucleus-jpa</artifactId>
-						<version>2.1.6</version>
-						<scope>runtime</scope>
-						<optional>true</optional>
-					</dependency>
-				</dependencies>
-				<configuration>
-					<api>JPA</api>
-					<verbose>true</verbose>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>process-classes</phase>
-						<goals>
-							<goal>enhance</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
 		</plugins>
 	</build>
 </project>

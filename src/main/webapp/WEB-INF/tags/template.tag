@@ -5,11 +5,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-	<title>Database.com App: springDebugTest</title>
+	<title>Java on Heroku Sample: execJarSample</title>
 	<link href="${pageContext.request.contextPath}/resources/layout.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-	<div id="header"><div id="app_title">springDebugTest</div></div>
+	<div id="header"><div id="app_title">execJarSample</div></div>
 	<div id="navigation">${breadcrumb}</div>
 	<div id="content">
 	

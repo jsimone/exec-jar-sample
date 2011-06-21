@@ -36,7 +36,7 @@ public class JettyLauncher {
         
         //Parent loader priority is a class loader setting that Jetty accepts.
         //By default Jetty will behave like most web containers in that it will
-        //allow your application to replace libraries even if they are part of the
+        //allow your application to replace non-server libraries that are part of the
         //container. Setting parent loader priority to true changes this behavior.
         //Read more here: http://wiki.eclipse.org/Jetty/Reference/Jetty_Classloading
         root.setParentLoaderPriority(true);
@@ -73,9 +73,16 @@ public class JettyLauncher {
         JarFile jarFile = new JarFile(new File(jettyLauncher.getArtifactLocation().getPath()));
         Attributes attributes = jarFile.getManifest().getMainAttributes();
         String classpath = attributes.getValue("Class-Path");
+        
+        //Heroku will set the port that we should run on into an environment variable
+        //Look for that variable and default to 8080 if it isn't there.
+        String webPort = System.getenv("PORT");
+        if(webPort == null || webPort.isEmpty()) {
+            webPort = "8080";
+        }
 
         //Start the jetty server
-        startJetty(webappDirLocation, classpath, 8080);
+        startJetty(webappDirLocation, classpath, Integer.valueOf(webPort));
     }
 
 }
